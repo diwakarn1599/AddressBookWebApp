@@ -142,7 +142,16 @@ body
     margin: 0 auto;
     
 }
-select
+.phNo
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.phNo>input{
+    margin-left: 5px;
+}
+.selects
 {
     padding: 5px 12px 5px 12px;
     border:1px solid #ccc;
@@ -152,7 +161,16 @@ select
     font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     color: #42515f;
     background-color: transparent;
-    min-width: 100px;
+    max-width: 130px;
+    outline: none;
+}
+.countryCode
+{
+    border:1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background-color: transparent;
     outline: none;
 }
 .button
@@ -186,13 +204,24 @@ select
     background: grey;
     margin-left:10px ;
 }
+.error
+{
+    color: red;
+    font-style: italic;
+    font-size: 15px;
+}
+.zipCodeclass
+{
+    display: flex;
+    flex-direction: column;
+}
 @media only screen and (max-width: 700px) {
     .form{
         width: 100%;
         min-height: 100%;
     }
     
-    select{
+    .selects{
         margin-bottom: 5px;
         width: 100%;
     }
