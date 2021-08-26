@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     addressBookList = getDataFromLocalStorage();
     document.getElementById('personCount').innerHTML = addressBookList.length;
     createTableContents();
+    localStorage.removeItem("editPerson");
 });
 let getDataFromLocalStorage = () =>
 {
@@ -52,4 +53,13 @@ let deletePerson = (person) =>
     localStorage.setItem("addressBookList",JSON.stringify(addressBookList));
     document.getElementById('personCount').innerHTML = addressBookList.length;
     createTableContents();
+}
+/********************************************Update person*************************************/
+let updatePerson = (person) =>
+{
+    let personData  = addressBookList.find(x => x.id == person.id);
+    if(!personData)
+        return;
+    localStorage.setItem("editPerson",JSON.stringify(personData));
+    window.location.replace(siteProperties.register_page);
 }

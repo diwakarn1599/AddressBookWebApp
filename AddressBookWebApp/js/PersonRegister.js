@@ -2,6 +2,11 @@ const getById = (id) =>
 {
     return document.querySelector(`#${id}`);
 }
+const navigate = () =>
+{
+    window.location.replace(siteProperties.home_page);
+}
+isUpdate = false;
 let personObject = {};
 let cities = [
     {
@@ -31,14 +36,9 @@ let cities = [
 ]
 window.addEventListener('DOMContentLoaded', (event) => {
     const state = getById('state');
-    const city = getById('city');
     state.addEventListener('input', () =>{
-        let allCities  = cities.find(x => x.state == state.value);
-        let option = '<option value="">Select City</option>';
-        allCities.city.forEach(element => {
-            option = `${option}<option value="${element}">${element}</option>`
-        });
-        city.innerHTML=option;
+        getCities();
+        
     });
     /****************************************************************/
     const name = getById('personName');
@@ -100,8 +100,30 @@ window.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 
-});
+    //update
+    checkForUpdate();
 
+});
+const getCities = () =>
+{
+    const state = getById('state');
+    const city = getById('city');
+    let allCities  = cities.find(x => x.state == state.value);
+    let option = '<option value="">Select City</option>';
+    allCities.city.forEach(element => {
+        option = `${option}<option value="${element}">${element}</option>`
+    });
+    city.innerHTML=option;
+}
+const checkForUpdate = () =>
+{
+    const editJson = localStorage.getItem("editPerson");
+    isUpdate = editJson ? true:false;
+    if(!isUpdate)
+        return;
+    personObject = JSON.parse(editJson);
+    setForm();
+}
 const save = () =>
 {
     try
@@ -109,6 +131,7 @@ const save = () =>
         setPersonObj();
         createAndUpdate();
         resetForm();
+        navigate();
     }
     catch(e)
     {
@@ -155,16 +178,32 @@ const setPersonObj = () =>
     }
     
 }
-
+const createPersonData = (id) =>
+{
+  if(!id)
+    personObject.id = createNewPersonId();
+  else
+    personObject.id = id;
+  return personObject;
+}
 const createAndUpdate = () =>
 {
-    let personId = createNewPersonId();
-    personObject.id = personId;
     let addressBookList = JSON.parse(localStorage.getItem("addressBookList"));
-    if(addressBookList!=undefined)
-        addressBookList.push(personObject);
+    if(addressBookList)
+    {
+        let personData  = addressBookList.find(x => x.id == personObject.id);
+        if(!personData)
+        {
+            addressBookList.push(createPersonData());
+        }
+        else
+        {
+            const index = addressBookList.map(x => x.id).indexOf(personObject.id);
+            addressBookList.splice(index,1,createPersonData(personObject.id));
+        }
+    }
     else
-        addressBookList=[personObject];
+        addressBookList=[createPersonData()];
     localStorage.setItem("addressBookList",JSON.stringify(addressBookList));
     alert("Saved");
 }
@@ -185,6 +224,19 @@ const resetForm = () =>
     getById('city').selectedIndex = 0;
     setValue('#address','');
     setValue('#zipCode','');
+}
+const setForm = () =>
+{
+    setValue('#personName',personObject.personName);
+    let phno = (personObject.phoneNumber).split(" ");
+    setValue('#phoneNumber',phno[1]);
+    setValue('#countryCode',phno[0]);
+    setValue('#state',personObject.state);
+    getCities();
+    setValue('#city',personObject.city);
+    setValue('#address',personObject.address);
+    setValue('#zipCode',personObject.zipCode);
+    
 }
 const setValue=(id,value)=>{
     const element = document.querySelector(id);
